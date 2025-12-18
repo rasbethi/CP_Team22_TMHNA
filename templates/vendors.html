@@ -36,18 +36,6 @@
         </div>
     </div>
 
-    <!-- Search Section -->
-    <div class="content-card"
-        style="margin-bottom: 2rem; padding: 1.5rem; display: flex; align-items: center; gap: 1rem;">
-        <i class="ph ph-magnifying-glass" style="font-size: 1.25rem; color: var(--slate-400);"></i>
-        <input type="text" id="vendor-search" class="input-modern"
-            placeholder="Search vendors by name, address, phone, or confidence..."
-            style="border: none; box-shadow: none; padding: 0.5rem 0; width: 100%; font-size: 1rem;">
-        <button id="clear-search-vendor" class="btn btn-ghost hidden" style="padding: 0.25rem 0.5rem;">
-            <i class="ph ph-x"></i>
-        </button>
-    </div>
-
     <!-- Tabs Navigation -->
     <div class="fiori-tabs-section" style="border-bottom: 1px solid var(--slate-200); margin-bottom: 2rem;">
         <div class="fiori-tabs" style="display: flex; gap: 2rem;">
@@ -106,9 +94,18 @@
                     <p class="text-muted" style="font-size: 0.875rem;">Source system vendor records</p>
                 </div>
             </div>
-            <!-- Download Button for Raw Data -->
-            <div style="padding: 1rem 2rem 1.5rem 2rem; display: flex; justify-content: flex-end; border-bottom: 1px solid var(--slate-200);">
-                <button id="download-raw-vendors-csv" class="btn btn-primary">
+            <!-- Search Bar and Download Button for Raw Vendor Data -->
+            <div style="padding: 1.5rem 2rem; border-bottom: 1px solid var(--slate-200); display: flex; align-items: center; gap: 1rem;">
+                <div style="display: flex; align-items: center; gap: 0.75rem; background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: var(--radius-sm); padding: 0.625rem 1rem; flex: 1;">
+                    <i class="ph ph-magnifying-glass" style="font-size: 1.125rem; color: var(--slate-400); flex-shrink: 0;"></i>
+                    <input type="text" id="raw-vendor-search" class="input-modern"
+                        placeholder="Search by vendor name, address, or phone..."
+                        style="border: none; box-shadow: none; padding: 0; width: 100%; font-size: 0.9375rem; background: transparent;">
+                    <button id="clear-raw-vendor-search" class="btn btn-ghost hidden" style="padding: 0.25rem 0.5rem; flex-shrink: 0;">
+                        <i class="ph ph-x"></i>
+                    </button>
+                </div>
+                <button id="download-raw-vendors-csv" class="btn btn-primary" style="flex-shrink: 0;">
                     <i class="ph ph-download-simple" style="margin-right: 0.5rem;"></i> Download CSV
                 </button>
             </div>

@@ -153,6 +153,7 @@ const updateMetrics = (rawData, harmonizedData, role) => {
 };
 
 let allVendorData = { raw: null, harmonized: null };
+let filteredRawVendorData = null; // Store filtered raw data
 
 const handleSearch = (searchTerm) => {
   if (!allVendorData.raw) return;
@@ -176,6 +177,7 @@ const handleSearch = (searchTerm) => {
       tmh: filterData(allVendorData.raw.tmh || []),
       raymond: filterData(allVendorData.raw.raymond || [])
     };
+    filteredRawVendorData = rawFiltered;
     renderRawVendors(rawFiltered, role);
   }
 
@@ -187,6 +189,28 @@ const handleSearch = (searchTerm) => {
       renderTable(harmonizedTable, harmonizedFiltered);
     }
   }
+};
+
+const handleRawVendorSearch = (searchTerm) => {
+  if (!allVendorData.raw) return;
+  const role = getRole();
+  const term = searchTerm.toLowerCase().trim();
+
+  const filterVendor = (vendor) => {
+    if (!term) return true;
+    const vendorName = (vendor.Vendor_Name || vendor.vendor_name || '').toLowerCase();
+    const address = (vendor.Address || vendor.address || '').toLowerCase();
+    const phone = (vendor.Phone || vendor.phone || '').toLowerCase();
+    return vendorName.includes(term) || address.includes(term) || phone.includes(term);
+  };
+
+  const rawFiltered = {
+    tmh: (allVendorData.raw.tmh || []).filter(filterVendor),
+    raymond: (allVendorData.raw.raymond || []).filter(filterVendor)
+  };
+  
+  filteredRawVendorData = rawFiltered;
+  renderRawVendors(rawFiltered, role);
 };
 
 const hydrate = async () => {
@@ -241,7 +265,12 @@ const switchToVendorTab = (targetId) => {
 
     // Load data when specific tabs are activated
     if (targetId === 'raw-vendor-pane') {
-      if (allVendorData.raw) {
+      // Use filtered data if search is active, otherwise use all data
+      const rawInput = document.getElementById('raw-vendor-search');
+      if (rawInput && rawInput.value.trim()) {
+        handleRawVendorSearch(rawInput.value);
+      } else if (allVendorData.raw) {
+        filteredRawVendorData = null;
         renderRawVendors(allVendorData.raw, role);
       }
     } else if (targetId === 'unified-vendor-pane' && role === 'maya') {
@@ -296,8 +325,11 @@ document.addEventListener("DOMContentLoaded", () => {
       // Update view mode
       mayaVendorViewMode = 'tmh';
 
-      // Re-render raw data
-      if (allVendorData.raw) {
+      // Re-render raw data (use filtered if search is active)
+      const rawInput = document.getElementById('raw-vendor-search');
+      if (rawInput && rawInput.value.trim() && filteredRawVendorData) {
+        renderRawVendors(filteredRawVendorData, role);
+      } else if (allVendorData.raw) {
         renderRawVendors(allVendorData.raw, role);
       }
     });
@@ -315,8 +347,11 @@ document.addEventListener("DOMContentLoaded", () => {
       // Update view mode
       mayaVendorViewMode = 'raymond';
 
-      // Re-render raw data
-      if (allVendorData.raw) {
+      // Re-render raw data (use filtered if search is active)
+      const rawInput = document.getElementById('raw-vendor-search');
+      if (rawInput && rawInput.value.trim() && filteredRawVendorData) {
+        renderRawVendors(filteredRawVendorData, role);
+      } else if (allVendorData.raw) {
         renderRawVendors(allVendorData.raw, role);
       }
     });
@@ -351,28 +386,37 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  const searchInput = document.getElementById("vendor-search");
-  const clearBtn = document.getElementById("clear-search-vendor");
+  // Raw vendor search bar (within Raw Vendor Data section)
+  const rawVendorSearchInput = document.getElementById("raw-vendor-search");
+  const clearRawVendorSearchBtn = document.getElementById("clear-raw-vendor-search");
 
-  if (searchInput) {
-    searchInput.addEventListener("input", (e) => {
-      handleSearch(e.target.value);
-      if (clearBtn) {
+  if (rawVendorSearchInput) {
+    rawVendorSearchInput.addEventListener("input", (e) => {
+      handleRawVendorSearch(e.target.value);
+      if (clearRawVendorSearchBtn) {
         if (e.target.value) {
-          clearBtn.classList.remove('hidden');
+          clearRawVendorSearchBtn.classList.remove('hidden');
         } else {
-          clearBtn.classList.add('hidden');
+          clearRawVendorSearchBtn.classList.add('hidden');
+          // Reset to show all data when search is cleared
+          if (allVendorData.raw) {
+            filteredRawVendorData = null;
+            renderRawVendors(allVendorData.raw, getRole());
+          }
         }
       }
     });
   }
 
-  if (clearBtn) {
-    clearBtn.addEventListener("click", () => {
-      if (searchInput) {
-        searchInput.value = "";
-        handleSearch("");
-        clearBtn.classList.add('hidden');
+  if (clearRawVendorSearchBtn) {
+    clearRawVendorSearchBtn.addEventListener("click", () => {
+      if (rawVendorSearchInput) {
+        rawVendorSearchInput.value = "";
+        filteredRawVendorData = null;
+        if (allVendorData.raw) {
+          renderRawVendors(allVendorData.raw, getRole());
+        }
+        clearRawVendorSearchBtn.classList.add('hidden');
       }
     });
   }

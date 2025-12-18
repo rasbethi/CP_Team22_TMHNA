@@ -12,28 +12,32 @@ document.addEventListener('DOMContentLoaded', () => {
 const loadKPIData = async (role) => {
     try {
         // Load vendor data for vendor count
-        const vendorRes = await fetch('/api/vendors/harmonized');
-        if (vendorRes.ok) {
-            const vendor = await vendorRes.json();
-            const vendorData = vendor.data || [];
-            
-            // Filter by role if needed
-            let filteredVendors = vendorData;
-            if (role === 'liam') {
-                filteredVendors = vendorData.filter(v => 
-                    v.raymond_source_name || 
-                    (v.source_brands && v.source_brands.includes('Raymond'))
-                );
-            } else if (role === 'ethan') {
-                filteredVendors = vendorData.filter(v => 
-                    v.tmh_source_name || 
-                    (v.source_brands && v.source_brands.includes('TMH'))
-                );
+        const vendorEl = document.getElementById('kpi-vendor-records');
+        
+        if (role === 'maya') {
+            // For Maya, show harmonized vendors
+            const vendorRes = await fetch('/api/vendors/harmonized');
+            if (vendorRes.ok) {
+                const vendor = await vendorRes.json();
+                const vendorData = vendor.data || [];
+                if (vendorEl) {
+                    vendorEl.textContent = vendorData.length;
+                }
             }
-            
-            const vendorEl = document.getElementById('kpi-vendor-records');
-            if (vendorEl) {
-                vendorEl.textContent = filteredVendors.length;
+        } else {
+            // For Liam and Ethan, show total raw vendors for their brand
+            const vendorRes = await fetch('/api/vendors/raw');
+            if (vendorRes.ok) {
+                const vendor = await vendorRes.json();
+                let vendorCount = 0;
+                if (role === 'liam') {
+                    vendorCount = (vendor.raymond || []).length;
+                } else if (role === 'ethan') {
+                    vendorCount = (vendor.tmh || []).length;
+                }
+                if (vendorEl) {
+                    vendorEl.textContent = vendorCount;
+                }
             }
         }
         

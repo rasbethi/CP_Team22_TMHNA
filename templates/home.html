@@ -22,7 +22,13 @@
             <!-- KPI Row -->
             <div class="kpi-row">
                 <div class="kpi-card">
-                    <div class="kpi-title">Harmonized Vendors</div>
+                    <div class="kpi-title">
+                        {% if session.get('role') == 'maya' %}
+                        Harmonized Vendors
+                        {% else %}
+                        Total Vendors
+                        {% endif %}
+                    </div>
                     <div class="kpi-value" id="kpi-vendor-records">-</div>
                 </div>
                 <div class="kpi-card">
