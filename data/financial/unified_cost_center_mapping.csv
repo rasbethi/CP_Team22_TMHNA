@@ -1,0 +1,9 @@
+source_cost_center,unified_cost_center,unified_cost_center_name
+CC10,UCC100,Manufacturing
+RC10,UCC100,Manufacturing
+CC20,UCC200,Engineering
+RC20,UCC200,Engineering
+CC30,UCC300,Sales & Distribution
+RC30,UCC300,Sales & Distribution
+MISSING,UCC000,Unallocated
+RC99,UCC990,Central Maintenance Ops

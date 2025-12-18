@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TMHNA Data Hub | Enterprise Harmony</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <!-- Phosphor Icons for modern SVG icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        .logout-link {
+            color: var(--slate-400);
+            transition: color 0.2s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .logout-link:hover {
+            color: var(--slate-900);
+        }
+    </style>
+</head>
+
+<body>
+    <header class="fiori-shell-bar">
+        <div class="shell-bar-content">
+            <div class="shell-bar-left">
+                <!-- Brand Heritage Logo Area -->
+                {% if session.get('role') == 'maya' %}
+                <div class="brand-logo-compact">
+                    <svg height="32" viewBox="0 0 300 60" xmlns="http://www.w3.org/2000/svg">
+                        <text x="0" y="22" font-family="Inter, sans-serif" font-size="20" font-weight="700"
+                            fill="#EB0A1E" letter-spacing="-0.5px">TOYOTA</text>
+                        <rect x="0" y="30" width="220" height="2" fill="#EB0A1E" opacity="0.3" />
+                        <text x="0" y="44" font-family="Inter, sans-serif" font-size="10" font-weight="600"
+                            fill="#64748B" letter-spacing="1px">MATERIAL HANDLING N.A.</text>
+                    </svg>
+                </div>
+                {% elif session.get('role') == 'liam' %}
+                <div class="brand-logo-compact">
+                    <svg height="32" viewBox="0 0 160 50" xmlns="http://www.w3.org/2000/svg">
+                        <text x="0" y="30" font-family="Inter, sans-serif" font-size="24" font-weight="800"
+                            fill="#EB0A1E" letter-spacing="-1px">RAYMOND</text>
+                    </svg>
+                </div>
+                {% else %}
+                <div class="brand-logo-compact">
+                    <svg height="32" viewBox="0 0 300 60" xmlns="http://www.w3.org/2000/svg">
+                        <text x="0" y="22" font-family="Inter, sans-serif" font-size="20" font-weight="700"
+                            fill="#EB0A1E" letter-spacing="-0.5px">TOYOTA</text>
+                        <text x="85" y="22" font-family="Inter, sans-serif" font-size="20" font-weight="400"
+                            fill="#64748B" letter-spacing="-0.5px">MATERIAL HANDLING</text>
+                    </svg>
+                </div>
+                {% endif %}
+
+                <div class="app-title">
+                    Unified Data Platform
+                </div>
+            </div>
+
+            <div class="shell-bar-center">
+                <nav class="fiori-nav">
+                    <a href="{{ url_for('home') }}"
+                        class="fiori-nav-item {% if request.path == '/' %}active{% endif %}">
+                        Dashboard
+                    </a>
+                    <a href="{{ url_for('financial.financial_page') }}"
+                        class="fiori-nav-item {% if '/financial' in request.path %}active{% endif %}">
+                        Financials
+                    </a>
+                    <a href="{{ url_for('vendors.vendor_page') }}"
+                        class="fiori-nav-item {% if '/vendors' in request.path %}active{% endif %}">
+                        Vendor Master
+                    </a>
+                    <a href="{{ url_for('analytics.analytics_page') }}"
+                        class="fiori-nav-item {% if '/analytics' in request.path %}active{% endif %}">
+                        Analytics
+                    </a>
+                    {% if session.get('role') == 'maya' %}
+                    <a href="{{ url_for('mapping.mapping_page') }}"
+                        class="fiori-nav-item {% if '/mappings' in request.path %}active{% endif %}">
+                        Mappings
+                    </a>
+                    {% endif %}
+                </nav>
+            </div>
+
+            <div class="shell-bar-right">
+                <div
+                    class="role-badge {% if session.get('role') == 'maya' %}enterprise{% elif session.get('role') == 'liam' %}raymond{% else %}tmh{% endif %}">
+                    {% if session.get('role') == 'maya' %}
+                    Enterprise Controller
+                    {% elif session.get('role') == 'liam' %}
+                    Raymond Controller
+                    {% else %}
+                    TMH Controller
+                    {% endif %}
+                </div>
+
+                <div class="user-profile">
+                    <div class="avatar-circle">
+                        {{ session.get('name', 'U')[0] }}
+                    </div>
+                </div>
+
+                <a href="{{ url_for('logout') }}" class="logout-link">
+                    <i class="ph ph-sign-out" style="font-size: 20px;"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="fiori-footer">
+        <div class="footer-content">
+            <span class="footer-text">TMHNA Unified Data Platform • Internal Use Only • v2.4.0</span>
+            <div class="footer-sub">System Status: <span
+                    style="color: var(--success); font-weight: 600;">Operational</span></div>
+        </div>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+    <script>
+        const currentRole = '{{ session.get("role", "maya") }}';
+        localStorage.setItem('tmhna_role', currentRole);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="home-container">
+    <!-- 1. Hero / System Status Bar -->
+    <div class="status-hero">
+        <div class="welcome-text">
+            <h1>Command Center</h1>
+            <p>Welcome, {{ session.get('name', 'User') }} • Secure Enterprise Environment</p>
+        </div>
+        <div class="system-status-indicator">
+            <div class="status-dot"></div>
+            <div class="status-label">System Operational</div>
+        </div>
+    </div>
+
+    <!-- 2. Main Dashboard Grid -->
+    <div class="dashboard-grid">
+
+        <!-- Left Panel: Metrics & Apps -->
+        <div class="left-panel">
+            <!-- KPI Row -->
+            <div class="kpi-row">
+                <div class="kpi-card">
+                    <div class="kpi-title">Harmonized Vendors</div>
+                    <div class="kpi-value" id="kpi-vendor-records">-</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-title">Financial Records</div>
+                    <div class="kpi-value" id="kpi-financial-records">-</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-title">Data Accuracy</div>
+                    <div class="kpi-value">99.8%</div>
+                </div>
+            </div>
+
+            <!-- Applications / Launchpad -->
+            <div class="apps-grid">
+                <a href="{{ url_for('financial.financial_page') }}" class="app-tile">
+                    <div class="app-icon">
+                        <i class="ph ph-currency-dollar" style="font-size: 24px;"></i>
+                    </div>
+                    <h3>Financial Integration</h3>
+                    <p>Review brand submissions, variance reports, and ledger reconciliation.</p>
+                </a>
+
+                <a href="{{ url_for('vendors.vendor_page') }}" class="app-tile">
+                    <div class="app-icon">
+                        <i class="ph ph-users-three" style="font-size: 24px;"></i>
+                    </div>
+                    <h3>Vendor Master</h3>
+                    <p>Fuzzy-match suppliers, resolve duplicates, and manage entities.</p>
+                </a>
+
+                <a href="{{ url_for('analytics.analytics_page') }}" class="app-tile">
+                    <div class="app-icon">
+                        <i class="ph ph-chart-line-up" style="font-size: 24px;"></i>
+                    </div>
+                    <h3>Global Analytics</h3>
+                    <p>Cross-brand insights, predictive modeling, and executive reports.</p>
+                </a>
+
+                {% if session.get('role') == 'maya' %}
+                <a href="{{ url_for('mapping.mapping_page') }}" class="app-tile">
+                    <div class="app-icon">
+                        <i class="ph ph-git-merge" style="font-size: 24px;"></i>
+                    </div>
+                    <h3>Data Mappings</h3>
+                    <p>Define transformation rules and governance protocols.</p>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Right Panel: Live Operations Signal (formerly Forklift Counter) -->
+        <div class="right-panel">
+            <div class="readiness-card">
+                <div class="readiness-content">
+                    <div
+                        style="font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.8); margin-bottom: 2rem;">
+                        Live Operations Pulse
+                    </div>
+
+                    <!-- Forklift Image with Rotation -->
+                    <div class="readiness-dial-wrapper">
+                        <div class="readiness-value-display">
+                            <img src="{{ url_for('static', filename='img/forklift.png') }}" 
+                                 alt="Forklift" 
+                                 class="forklift-rotating">
+                        </div>
+                    </div>
+
+                    <!-- The dynamic numbers -->
+                    <div class="readiness-big-number" id="kpi-forklifts-built">0</div>
+                    <div class="readiness-label">Forklifts Built This Week</div>
+
+                    <!-- Progress Bar (Styled to look like a system loader) -->
+                    <div
+                        style="background: rgba(255,255,255,0.1); height: 6px; width: 100%; border-radius: 4px; margin-top: 2rem; overflow: hidden;">
+                        <div id="forklift-progress-fill"
+                            style="background: #3B82F6; height: 100%; width: 0%; transition: width 0.5s;"></div>
+                    </div>
+                    <div class="readiness-label" style="margin-top: 0.5rem; font-size: 0.75rem;">
+                        Target Efficiency: <span id="forklift-progress-text">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Context Card -->
+            <div class="content-card" style="margin-top: 0; padding: 1.5rem;">
+                <h4
+                    style="margin-bottom: 1rem; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--slate-500);">
+                    System Notifications</h4>
+
+                <div
+                    style="display: flex; gap: 1rem; align-items: start; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--slate-100);">
+                    <div
+                        style="width: 8px; height: 8px; background: var(--warning); border-radius: 50%; margin-top: 6px;">
+                    </div>
+                    <div>
+                        <div style="font-size: 0.875rem; font-weight: 600;">Data Reconciliation Pending</div>
+                        <div style="font-size: 0.8rem; color: var(--slate-500);">2 variances detected in Q4 reports.
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; align-items: start;">
+                    <div
+                        style="width: 8px; height: 8px; background: var(--success); border-radius: 50%; margin-top: 6px;">
+                    </div>
+                    <div>
+                        <div style="font-size: 0.875rem; font-weight: 600;">Mapping Protocols Updated</div>
+                        <div style="font-size: 0.8rem; color: var(--slate-500);">New governance rules applied
+                            successfully.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/home.js') }}"></script>
+{% endblock %}

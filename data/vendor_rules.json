@@ -1,0 +1,27 @@
+{
+  "confidence_threshold": 85,
+  "name_weight": 0.7,
+  "address_weight": 0.3,
+  "normalization_rules": {
+    "lowercase": true,
+    "remove_punctuation": true,
+    "collapse_spaces": true
+  },
+  "manual_overrides": {},
+  "last_updated": "2025-12-15T16:11:24.176896",
+  "updated_by": "Maya Patel",
+  "manual_merges": {
+    "V0002||V0005": {
+      "vendor_ids": [
+        "V0002",
+        "V0005"
+      ],
+      "unified_name": "SteelWorks Inc",
+      "unified_address": "456 Industrial Ave, Toledo, OH, USA",
+      "unified_phone": "(419) 555-0202",
+      "merged_by": "Maya Patel",
+      "merged_at": "2025-12-15T16:11:24.176875",
+      "confidence": 100
+    }
+  }
+}

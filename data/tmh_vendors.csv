@@ -1,0 +1,10 @@
+brand,vendor_id,vendor_name,address,city,state,country,phone
+TMH,V001,ABC Logistics,123 Freight Rd,Dallas,TX,USA,214-555-0101
+TMH,V002,SteelWorks Inc,456 Industrial Ave,Toledo,OH,USA,419-555-0202
+TMH,V003,Fastenal Supply,789 Parts Blvd,Chicago,IL,USA,312-555-0303
+TMH,V004,Global Bearings,22 Precision Way,Detroit,MI,USA,313-555-0404
+TMH,V005,Northwest Components Inc,101 Tech Drive,Portland,OR,USA,503-555-0606
+TMH,V006,Western Manufacturing Co,789 Industrial Way,Seattle,WA,USA,206-555-0707
+TMH,V007,Central Distribution Systems,555 Warehouse Blvd,Memphis,TN,USA,901-555-0808
+TMH,V008,Southern Equipment Solutions,234 Commerce Park,Atlanta,GA,USA,404-555-0909
+

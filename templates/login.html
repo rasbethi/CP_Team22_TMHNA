@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - TMHNA Enterprise Data</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+
+<body>
+    <div class="login-page-wrapper">
+        <div class="login-card-modern">
+            <div class="login-header-modern">
+                <div class="login-brand-logo">
+                    <!-- Unified Brand Logo for Login -->
+                    <svg height="40" viewBox="0 0 320 60" xmlns="http://www.w3.org/2000/svg"
+                        style="display: block; margin: 0 auto;">
+                        <text x="50%" y="24" text-anchor="middle" font-family="Inter, sans-serif" font-size="22"
+                            font-weight="700" fill="#EB0A1E" letter-spacing="-0.5px">TOYOTA</text>
+                        <text x="50%" y="46" text-anchor="middle" font-family="Inter, sans-serif" font-size="11"
+                            font-weight="600" fill="#64748B" letter-spacing="1.5px">MATERIAL HANDLING N.A.</text>
+                    </svg>
+                </div>
+                <h1 class="login-title">Unified Data Platform</h1>
+                <p class="login-subtitle">Sign in to your account</p>
+            </div>
+
+            <div id="error-message" class="error-message"></div>
+
+            <form class="login-form" id="loginForm" method="POST" action="{{ url_for('login') }}">
+                <div class="input-group-modern">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" class="input-modern" placeholder="e.g., maya"
+                        required autofocus>
+                </div>
+
+                <div class="input-group-modern">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" class="input-modern" placeholder="••••"
+                        required>
+                </div>
+
+                <button type="submit" class="btn-login-modern" id="loginButton">Login</button>
+
+                <div style="margin-top: 1.5rem; text-align: center; font-size: 0.875rem; color: var(--slate-500);">
+                    Authorized personnel only.
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MFA Verification Modal -->
+    <div id="mfaModal" class="mfa-modal" style="display: none;">
+        <div class="mfa-modal-overlay"></div>
+        <div class="mfa-modal-content">
+            <div class="mfa-modal-header">
+                <h2>Two-Factor Authentication</h2>
+                <p class="mfa-subtitle">Enter the verification code sent to your email</p>
+            </div>
+
+            <form id="mfaForm" class="mfa-form">
+                <div class="input-group-modern">
+                    <label for="mfaCode">Verification Code</label>
+                    <input type="text" id="mfaCode" name="mfaCode" class="input-modern" 
+                           placeholder="Enter 6-digit code" maxlength="6" pattern="[0-9]{6}" required autofocus>
+                </div>
+
+                <div id="mfaError" class="mfa-error" style="display: none;"></div>
+
+                <div class="mfa-form-actions">
+                    <button type="submit" class="btn-login-modern">Verify & Continue</button>
+                    <button type="button" class="btn-go-back" id="mfaGoBack">Go Back</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MFA Code Notification Popup -->
+    <div id="mfaCodePopup" class="mfa-code-popup" style="display: none;">
+        <div class="mfa-code-popup-content">
+            <div class="mfa-code-popup-header">
+                <span class="mfa-code-popup-icon">🔐</span>
+                <span class="mfa-code-popup-title">Verification Code</span>
+                <button class="mfa-code-popup-close" id="mfaCodePopupClose">×</button>
+            </div>
+            <div class="mfa-code-popup-body">
+                <div class="mfa-code-popup-label">Your code:</div>
+                <div class="mfa-code-popup-value" id="mfaCodeDisplay">000000</div>
+                <div class="mfa-code-popup-hint">Check your email for this code</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Show error message if present
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get('error');
+        if (error) {
+            const errorEl = document.getElementById('error-message');
+            errorEl.textContent = decodeURIComponent(error);
+            errorEl.classList.add('show');
+            errorEl.style.display = 'block';
+            errorEl.style.color = '#b91c1c';
+            errorEl.style.background = '#fee2e2';
+            errorEl.style.padding = '0.75rem';
+            errorEl.style.borderRadius = 'var(--radius-sm)';
+            errorEl.style.marginBottom = '1.5rem';
+            errorEl.style.textAlign = 'center';
+        }
+
+        // MFA Handling
+        const loginForm = document.getElementById('loginForm');
+        const mfaModal = document.getElementById('mfaModal');
+        const mfaForm = document.getElementById('mfaForm');
+        const mfaCodeDisplay = document.getElementById('mfaCodeDisplay');
+        const mfaCodeInput = document.getElementById('mfaCode');
+        const mfaError = document.getElementById('mfaError');
+        const loginButton = document.getElementById('loginButton');
+        const mfaCodePopup = document.getElementById('mfaCodePopup');
+        const mfaCodePopupClose = document.getElementById('mfaCodePopupClose');
+
+        // Handle login form submission
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            loginButton.disabled = true;
+            loginButton.textContent = 'Verifying...';
+            
+            try {
+                const response = await fetch('{{ url_for("login") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        username: username,
+                        password: password
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success && data.mfa_required) {
+                    // Show MFA code in top-right popup
+                    mfaCodeDisplay.textContent = data.mfa_code;
+                    mfaCodePopup.style.display = 'block';
+                    
+                    // Show MFA modal
+                    mfaModal.style.display = 'flex';
+                    mfaCodeInput.focus();
+                } else if (data.success) {
+                    // No MFA required (shouldn't happen with current setup)
+                    window.location.href = data.redirect || '/';
+                } else {
+                    // Show error
+                    const errorEl = document.getElementById('error-message');
+                    errorEl.textContent = data.error || 'Login failed';
+                    errorEl.style.display = 'block';
+                    loginButton.disabled = false;
+                    loginButton.textContent = 'Login';
+                }
+            } catch (error) {
+                const errorEl = document.getElementById('error-message');
+                errorEl.textContent = 'An error occurred. Please try again.';
+                errorEl.style.display = 'block';
+                loginButton.disabled = false;
+                loginButton.textContent = 'Login';
+            }
+        });
+
+        // Handle MFA form submission
+        mfaForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const code = mfaCodeInput.value.trim();
+            mfaError.style.display = 'none';
+            
+            if (code.length !== 6 || !/^\d+$/.test(code)) {
+                mfaError.textContent = 'Please enter a valid 6-digit code';
+                mfaError.style.display = 'block';
+                return;
+            }
+            
+            const submitButton = mfaForm.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Verifying...';
+            
+            try {
+                const response = await fetch('{{ url_for("verify_mfa") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ code: code })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Close popup on successful verification
+                    mfaCodePopup.style.display = 'none';
+                    window.location.href = data.redirect || '/';
+                } else {
+                    mfaError.textContent = data.error || 'Invalid code. Please try again.';
+                    mfaError.style.display = 'block';
+                    mfaCodeInput.value = '';
+                    mfaCodeInput.focus();
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Verify & Continue';
+                }
+            } catch (error) {
+                mfaError.textContent = 'An error occurred. Please try again.';
+                mfaError.style.display = 'block';
+                submitButton.disabled = false;
+                submitButton.textContent = 'Verify & Continue';
+            }
+        });
+
+        // Auto-format MFA code input (numbers only)
+        mfaCodeInput.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/\D/g, '').slice(0, 6);
+        });
+
+        // Handle Go Back button
+        const mfaGoBackBtn = document.getElementById('mfaGoBack');
+        mfaGoBackBtn.addEventListener('click', () => {
+            // Close modal and popup
+            mfaModal.style.display = 'none';
+            mfaCodePopup.style.display = 'none';
+            
+            // Clear MFA form
+            mfaCodeInput.value = '';
+            mfaError.style.display = 'none';
+            
+            // Reset login form
+            document.getElementById('password').value = '';
+            loginButton.disabled = false;
+            loginButton.textContent = 'Login';
+            
+            // Focus on username field
+            document.getElementById('username').focus();
+        });
+
+        // Handle popup close button
+        mfaCodePopupClose.addEventListener('click', () => {
+            mfaCodePopup.style.display = 'none';
+        });
+
+        // Also allow closing modal by clicking overlay
+        document.querySelector('.mfa-modal-overlay').addEventListener('click', () => {
+            mfaGoBackBtn.click();
+        });
+    </script>
+</body>
+
+</html>

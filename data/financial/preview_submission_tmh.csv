@@ -1,0 +1,19 @@
+brand,source_account,source_account_name,unified_account,unified_account_name,unified_cost_center,unified_cost_center_name,amount
+TMH,01-100,Cash,U100,Cash & Cash Equivalents,UCC100,Manufacturing,100000
+TMH,01-200,Accounts Receivable,U200,Accounts Receivable,UCC100,Manufacturing,250000
+TMH,01-300,Inventory,U300,Inventory,UCC100,Manufacturing,450000
+TMH,01-500,Equipment,U500,Fixed Assets - Equipment,UCC200,Engineering,1200000
+TMH,04-400,Service Revenue,U400,Service Revenue,UCC300,Sales & Distribution,850000
+TMH,05-600,Cost of Goods Sold,U600,Cost of Goods Sold,UCC100,Manufacturing,320000
+TMH,09-800,Salaries Expense,U800,Salaries & Wages Expense,UCC200,Engineering,180000
+TMH,09-900,Utilities Expense,U900,Utilities Expense,UCC100,Manufacturing,25000
+TMH,09-960,Legal Expense,U960,Legal & Professional Services Expense,UCC200,Engineering,28000
+TMH,09-965,Training Expense,U965,Training & Development Expense,UCC100,Manufacturing,19500
+TMH,09-980,Telecommunications Expense,U105,Telecommunications & Network Expense,UCC200,Engineering,22000
+TMH,09-985,Insurance Expense,U935,Insurance Expense,UCC200,Engineering,25000
+TMH,09-990,Research & Development Expense,U999,Research & Development Expense,UCC200,Engineering,35000
+TMH,09-995,Unmapped Expense Type B,U996,Other Operating Expenses,UCC100,Manufacturing,15000
+TMH,09-915,Office Supplies Expense,U915,Office Supplies Expense,UCC200,Engineering,11000
+TMH,09-920,Depreciation Expense,U920,Depreciation Expense,UCC100,Manufacturing,14000
+TMH,09-925,Professional Services Expense,U925,Professional Services Expense,UCC200,Engineering,27000
+TMH,09-991,Warranty Expense,U480,Warranty & Service Costs,UCC200,Engineering,19500

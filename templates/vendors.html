@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="home-container">
+    <!-- Page Header -->
+    <div style="margin-bottom: 2rem;">
+        <div style="font-size: 0.875rem; color: var(--slate-500); margin-bottom: 0.5rem;">
+            Dashboard / Vendor Master
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+            <div>
+                <h1 style="font-size: 1.875rem; color: var(--slate-900); margin-bottom: 0.5rem;">Vendor Master</h1>
+                <p style="color: var(--slate-600); max-width: 600px;">
+                    Resolve duplicates, standardize contacts, and score matches across TMH and Raymond.
+                </p>
+            </div>
+
+            <div class="page-actions">
+            </div>
+        </div>
+    </div>
+
+    <!-- Metric Cards -->
+    <div class="kpi-row" style="margin-bottom: 2rem;">
+        <div class="kpi-card">
+            <div class="kpi-title">Total Unified Vendors</div>
+            <div class="kpi-value" id="metric-vendors-loaded">0</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-title">Cross-Brand Matches</div>
+            <div class="kpi-value" id="metric-cross-matches">0</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-title">Duplicates Resolved</div>
+            <div class="kpi-value" id="metric-duplicates-removed">0</div>
+        </div>
+    </div>
+
+    <!-- Search Section -->
+    <div class="content-card"
+        style="margin-bottom: 2rem; padding: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+        <i class="ph ph-magnifying-glass" style="font-size: 1.25rem; color: var(--slate-400);"></i>
+        <input type="text" id="vendor-search" class="input-modern"
+            placeholder="Search vendors by name, address, phone, or confidence..."
+            style="border: none; box-shadow: none; padding: 0.5rem 0; width: 100%; font-size: 1rem;">
+        <button id="clear-search-vendor" class="btn btn-ghost hidden" style="padding: 0.25rem 0.5rem;">
+            <i class="ph ph-x"></i>
+        </button>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <div class="fiori-tabs-section" style="border-bottom: 1px solid var(--slate-200); margin-bottom: 2rem;">
+        <div class="fiori-tabs" style="display: flex; gap: 2rem;">
+            <button class="fiori-tab active" data-target="raw-vendor-pane"
+                style="background: none; border: none; padding: 0.75rem 0; font-weight: 500; color: var(--slate-600); border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s;">Raw
+                Data</button>
+            {% if session.get('role') == 'maya' %}
+            <button class="fiori-tab" data-target="unified-vendor-pane"
+                style="background: none; border: none; padding: 0.75rem 0; font-weight: 500; color: var(--slate-600); border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s;">Unified
+                View</button>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- CSS for tabs -->
+    <style>
+        .fiori-tab.active {
+            color: var(--slate-900) !important;
+            border-bottom-color: var(--slate-900) !important;
+        }
+
+        .fiori-pane {
+            display: none;
+        }
+
+        .fiori-pane.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+    </style>
+
+    <!-- Content Panes -->
+    <section id="raw-vendor-pane" class="fiori-pane active">
+        {% if session.get('role') == 'maya' %}
+        <div style="margin-bottom: 1.5rem; display: flex; gap: 0.5rem;">
+            <button class="btn btn-ghost active" data-brand="tmh" id="toggle-vendor-tmh"
+                style="border: 1px solid var(--slate-200);">TMH</button>
+            <button class="btn btn-ghost" data-brand="raymond" id="toggle-vendor-raymond"
+                style="border: 1px solid var(--slate-200);">Raymond</button>
+        </div>
+        <style>
+            /* Simple toggle active state for this page specifically */
+            #toggle-vendor-tmh.active,
+            #toggle-vendor-raymond.active {
+                background: var(--slate-900);
+                color: white;
+                border-color: var(--slate-900);
+            }
+        </style>
+        {% endif %}
+
+        <div class="content-card" style="margin-top: 0;">
+            <div class="content-header">
+                <div>
+                    <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem;">Raw Vendor Data</h3>
+                    <p class="text-muted" style="font-size: 0.875rem;">Source system vendor records</p>
+                </div>
+            </div>
+            <!-- Download Button for Raw Data -->
+            <div style="padding: 1rem 2rem 1.5rem 2rem; display: flex; justify-content: flex-end; border-bottom: 1px solid var(--slate-200);">
+                <button id="download-raw-vendors-csv" class="btn btn-primary">
+                    <i class="ph ph-download-simple" style="margin-right: 0.5rem;"></i> Download CSV
+                </button>
+            </div>
+            <div style="padding: 0; overflow-x: auto;">
+                <table class="data-table-modern" id="raw-vendor-table" style="table-layout: fixed; width: 100%;">
+                    <thead>
+                        <tr>
+                            <th style="min-width: 200px;">Vendor Name</th>
+                            <th style="min-width: 300px;">Address</th>
+                            <th style="min-width: 150px;">Phone</th>
+                            <th style="min-width: 120px;">Source Brand</th>
+                        </tr>
+                    </thead>
+                    <tbody id="raw-vendor-body">
+                        <tr>
+                            <td colspan="4" style="padding: 2rem; text-align: center; color: var(--slate-500);">Loading vendor data...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    {% if session.get('role') == 'maya' %}
+    <section id="unified-vendor-pane" class="fiori-pane">
+        <div class="content-card" style="margin-top: 0;">
+            <div class="content-header">
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <div class="role-badge enterprise">Unified</div>
+                    <div>
+                        <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem;">Unified Vendor Master
+                        </h3>
+                        <p class="text-muted" style="font-size: 0.875rem;">Confidence-coded matches with lineage to
+                            source brand.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Download Button for Unified Data -->
+            <div style="padding: 1rem 2rem 1.5rem 2rem; display: flex; justify-content: flex-end; border-bottom: 1px solid var(--slate-200);">
+                <button id="download-unified-vendors-csv" class="btn btn-primary">
+                    <i class="ph ph-download-simple" style="margin-right: 0.5rem;"></i> Download CSV
+                </button>
+            </div>
+            <div>
+                <table class="data-table-modern" id="harmonized-vendor-table">
+                    <!-- Populated by JS -->
+                </table>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/vendors.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,323 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="home-container">
+    <!-- Page Header -->
+    <div style="margin-bottom: 2rem;">
+        <div style="font-size: 0.875rem; color: var(--slate-500); margin-bottom: 0.5rem;">
+            Dashboard / Financial Integration
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+            <div>
+                <h1 style="font-size: 1.875rem; color: var(--slate-900); margin-bottom: 0.5rem;">Financials</h1>
+                <p style="color: var(--slate-600); max-width: 600px;">
+                    {% if session.get('role') == 'maya' %}
+                    Review brand submissions, analyze cross-brand variances, and establish the unified ledger.
+                    {% elif session.get('role') == 'liam' %}
+                    Manage Raymond financial data, validate mappings, and submit to corporate.
+                    {% else %}
+                    Manage TMH financial data, validate mappings, and submit to corporate.
+                    {% endif %}
+                </p>
+            </div>
+
+            <div class="page-actions">
+                {% if session.get('role') != 'maya' %}
+                <button id="download-raw-csv" class="btn btn-primary" onclick="downloadRawDataCSV()">
+                    <i class="ph ph-download-simple" style="margin-right: 0.5rem;"></i> Download CSV
+                </button>
+                {% endif %}
+                <div
+                    class="role-badge {% if session.get('role') == 'maya' %}enterprise{% elif session.get('role') == 'liam' %}raymond{% else %}tmh{% endif %}"
+                    style="margin-left: 1rem;">
+                    {% if session.get('role') == 'maya' %}Enterprise View{% else %}Brand Controller View{% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <div class="fiori-tabs-section" style="border-bottom: 1px solid var(--slate-200); margin-bottom: 2rem;">
+        <div class="fiori-tabs" style="display: flex; gap: 2rem;">
+            {% if session.get('role') == 'maya' %}
+            <button class="fiori-tab active" data-target="brand-approved-pane"
+                style="background: none; border: none; padding: 0.75rem 0; font-weight: 500; color: var(--slate-600); border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s;">Approved
+                Data</button>
+            <button class="fiori-tab" data-target="corporate-unified-pane"
+                style="background: none; border: none; padding: 0.75rem 0; font-weight: 500; color: var(--slate-600); border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s;">Unified
+                View</button>
+            <button class="fiori-tab" data-target="variances-pane"
+                style="background: none; border: none; padding: 0.75rem 0; font-weight: 500; color: var(--slate-600); border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s;">Variances</button>
+            <button class="fiori-tab" data-target="submissions-pane"
+                style="background: none; border: none; padding: 0.75rem 0; font-weight: 500; color: var(--slate-600); border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s;">Submissions</button>
+            <button class="fiori-tab" data-target="history-pane"
+                style="background: none; border: none; padding: 0.75rem 0; font-weight: 500; color: var(--slate-600); border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s;">History</button>
+            {% else %}
+            <button class="fiori-tab active" data-target="raw-data-pane"
+                style="background: none; border: none; padding: 0.75rem 0; font-weight: 500; color: var(--slate-600); border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s;">Raw
+                Data</button>
+            <button class="fiori-tab" data-target="preview-pane"
+                style="background: none; border: none; padding: 0.75rem 0; font-weight: 500; color: var(--slate-600); border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s;">Preview
+                Submission</button>
+            <button class="fiori-tab" data-target="variances-pane"
+                style="background: none; border: none; padding: 0.75rem 0; font-weight: 500; color: var(--slate-600); border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s;">Variances</button>
+            <button class="fiori-tab" data-target="history-pane"
+                style="background: none; border: none; padding: 0.75rem 0; font-weight: 500; color: var(--slate-600); border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s;">History</button>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- CSS to handle tab states (since we removed the old CSS class logic) -->
+    <style>
+        .fiori-tab.active {
+            color: var(--slate-900) !important;
+            border-bottom-color: var(--slate-900) !important;
+        }
+
+        .fiori-pane {
+            display: none;
+        }
+
+        .fiori-pane.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+
+    {% if session.get('role') == 'maya' %}
+    <!-- Corporate View Panes -->
+
+    <section id="brand-approved-pane" class="fiori-pane active">
+        <div class="content-card" style="margin-top: 0;">
+            <div class="content-header">
+                <div>
+                    <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem;">Brand-Level Approved Data
+                    </h3>
+                    <p class="text-muted" style="font-size: 0.875rem;">Audit trail of approved brand submissions.</p>
+                </div>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <label style="font-weight: 500; font-size: 0.875rem;">Brand Source:</label>
+                    <select id="brand-toggle" class="input-modern" style="width: auto; padding: 0.5rem 1rem;">
+                        <option value="tmh">Toyota Material Handling</option>
+                        <option value="raymond">The Raymond Corp</option>
+                    </select>
+                </div>
+            </div>
+            <!-- Download Buttons for Brand-Approved Data -->
+            <div style="padding: 1rem 2rem 1.5rem 2rem; display: flex; gap: 1rem; align-items: center; justify-content: flex-end; border-bottom: 1px solid var(--slate-200);">
+                <button id="download-tmh-approved-csv" class="btn btn-primary" onclick="downloadBrandApprovedCSV('tmh')">
+                    <i class="ph ph-download-simple" style="margin-right: 0.5rem;"></i> Download CSV
+                </button>
+                <button id="download-raymond-approved-csv" class="btn btn-primary" onclick="downloadBrandApprovedCSV('raymond')">
+                    <i class="ph ph-download-simple" style="margin-right: 0.5rem;"></i> Download CSV
+                </button>
+            </div>
+            <div style="padding: 0;">
+                <div id="brand-approved-content" style="padding: 2rem;">
+                    <div class="loading-spinner">Loading brand data...</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="corporate-unified-pane" class="fiori-pane">
+        <div class="content-card" style="margin-top: 0;">
+            <div class="content-header">
+                <div>
+                    <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem;">Corporate Unified Ledger
+                    </h3>
+                    <p class="text-muted" style="font-size: 0.875rem;">Aggregated Single Source of Truth [Summed
+                        Amounts]</p>
+                </div>
+            </div>
+            <!-- Download Button for Unified Data -->
+            <div style="padding: 1rem 2rem 1.5rem 2rem; display: flex; justify-content: flex-end; border-bottom: 1px solid var(--slate-200);">
+                <button id="download-unified-csv" class="btn btn-primary" onclick="downloadUnifiedCSV()">
+                    <i class="ph ph-download-simple" style="margin-right: 0.5rem;"></i> Download CSV
+                </button>
+            </div>
+            <!-- Search Bar for Unified Data -->
+            <div style="padding: 1rem 2rem 0 2rem; display: flex; align-items: center; gap: 1rem;">
+                <i class="ph ph-magnifying-glass" style="font-size: 1.25rem; color: var(--slate-400);"></i>
+                <input type="text" id="unified-data-search" class="input-modern"
+                    placeholder="Search by unified account, cost center, amount, or brands..."
+                    style="border: none; box-shadow: none; padding: 0.5rem 0; width: 100%; font-size: 0.875rem;">
+                <button id="clear-unified-search" class="btn btn-ghost hidden" style="padding: 0.25rem 0.5rem;">
+                    <i class="ph ph-x"></i>
+                </button>
+            </div>
+            <div id="corporate-unified-content" style="padding: 2rem;">
+                <div class="loading-spinner">Aggregating enterprise logic...</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="variances-pane" class="fiori-pane">
+        <div class="content-card" style="margin-top: 0;">
+            <div class="content-header">
+                <div>
+                    <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem;">Exception Management</h3>
+                    <p class="text-muted" style="font-size: 0.875rem;">Unmapped entities and reconciliation variances.
+                    </p>
+                </div>
+            </div>
+            <div id="variances-content" style="padding: 2rem;">
+                <div class="loading-spinner">Analyzing variances...</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="submissions-pane" class="fiori-pane">
+        <div class="content-card" style="margin-top: 0;">
+            <div class="content-header">
+                <div>
+                    <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem;">Submission Queue</h3>
+                    <p class="text-muted" style="font-size: 0.875rem;">Review and approve incoming data packages.</p>
+                </div>
+            </div>
+            <div id="submissions-content" style="padding: 2rem;">
+                <div class="loading-spinner">Checking queue...</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="history-pane" class="fiori-pane">
+        <div class="content-card" style="margin-top: 0;">
+            <div class="content-header">
+                <div>
+                    <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem;">Submission Archive</h3>
+                    <p class="text-muted" style="font-size: 0.875rem;">Historical record of all approved data packages.
+                    </p>
+                </div>
+            </div>
+            <div id="history-content" style="padding: 2rem;">
+                <div class="loading-spinner">Loading history...</div>
+            </div>
+        </div>
+    </section>
+
+    {% else %}
+    <!-- Brand Controller View Panes -->
+
+    <section id="raw-data-pane" class="fiori-pane active">
+        <div class="content-card" style="margin-top: 0;">
+            <div class="content-header">
+                <div>
+                    <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem;">Source System Data</h3>
+                    <p class="text-muted" style="font-size: 0.875rem;">Raw ledger export from {{
+                        session.get('role')|upper }} ERP.</p>
+                </div>
+            </div>
+            <!-- Search Bar for Raw Data -->
+            <div style="padding: 1rem 2rem 0 2rem; display: flex; align-items: center; gap: 1rem;">
+                <i class="ph ph-magnifying-glass" style="font-size: 1.25rem; color: var(--slate-400);"></i>
+                <input type="text" id="raw-data-search" class="input-modern"
+                    placeholder="Search by account number, name, cost center, or amount..."
+                    style="border: none; box-shadow: none; padding: 0.5rem 0; width: 100%; font-size: 0.875rem;">
+                <button id="clear-raw-search" class="btn btn-ghost hidden" style="padding: 0.25rem 0.5rem;">
+                    <i class="ph ph-x"></i>
+                </button>
+            </div>
+            <div>
+                <table class="data-table-modern" id="raw-data-table">
+                    <thead>
+                        <tr>
+                            <th>Account Number</th>
+                            <th>Account Name</th>
+                            <th>Cost Center</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="raw-data-body">
+                        <tr>
+                            <td colspan="4" style="padding: 2rem; text-align: center; color: var(--slate-500);">Loading
+                                source data...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section id="preview-pane" class="fiori-pane">
+        <div class="content-card" style="margin-top: 0;">
+            <div class="content-header">
+                <div>
+                    <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem;">Submission Preview</h3>
+                    <p class="text-muted" style="font-size: 0.875rem;">Simulated view of mapped data before submission.
+                    </p>
+                </div>
+                <!-- Submit Button -->
+                <button id="submit-to-corporate" class="btn btn-primary">
+                    <i class="ph ph-paper-plane-right" style="margin-right: 0.5rem;"></i>
+                    Submit Data Package
+                </button>
+            </div>
+            <div>
+                <table class="data-table-modern" id="preview-table">
+                    <thead>
+                        <tr>
+                            <th>Source Account</th>
+                            <th>Unified Account</th>
+                            <th>Unified Cost Center</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="preview-body">
+                        <tr>
+                            <td colspan="4" style="padding: 2rem; text-align: center; color: var(--slate-500);">
+                                Generating preview...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section id="variances-pane" class="fiori-pane">
+        <div class="content-card" style="margin-top: 0;">
+            <div class="content-header">
+                <div>
+                    <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem;">Mapping Gaps</h3>
+                    <p class="text-muted" style="font-size: 0.875rem;">Items requiring attention before submission.</p>
+                </div>
+            </div>
+            <div id="variances-content" style="padding: 2rem;">
+                <div class="loading-spinner">Scanning for gaps...</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="history-pane" class="fiori-pane">
+        <div class="content-card" style="margin-top: 0;">
+            <div class="content-header">
+                <div>
+                    <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem;">Transmission Log</h3>
+                    <p class="text-muted" style="font-size: 0.875rem;">Status of previous data packages.</p>
+                </div>
+            </div>
+            <div id="history-content" style="padding: 2rem;">
+                <div class="loading-spinner">Loading logs...</div>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/financial.js') }}"></script>
+{% endblock %}

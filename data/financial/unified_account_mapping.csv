@@ -1,0 +1,31 @@
+source_account_name,unified_account_name,unified_account_number
+Cash,Cash & Cash Equivalents,U100
+Accounts Receivable,Accounts Receivable,U200
+Inventory,Inventory,U300
+Equipment,Fixed Assets - Equipment,U500
+Service Revenue,Service Revenue,U400
+Parts Revenue,Aftermarket Parts Revenue,U525
+Cost of Goods Sold,Cost of Goods Sold,U600
+Salaries Expense,Salaries & Wages Expense,U800
+Travel Expense,Travel & Employee Expenses,U710
+Utilities Expense,Utilities Expense,U900
+Rent Expense,Rent Expense,U950
+Marketing Expense,Marketing & Advertising Expense,U825
+Office Supplies Expense,Office Supplies Expense,U915
+Depreciation Expense,Depreciation Expense,U920
+Insurance Expense,Insurance Expense,U935
+Maintenance Expense,Maintenance & Repairs Expense,U945
+Professional Services Expense,Professional Services Expense,U925
+Bad Debt Expense,Bad Debt Expense,U930
+Consulting Services Expense,Professional Services Expense,U925
+Legal Expense,Legal & Professional Services Expense,U960
+Training Expense,Training & Development Expense,U965
+Software License Expense,Software & Technology Expense,U970
+Equipment Rental Expense,Equipment Rental Expense,U730
+Freight Expense,Freight & Logistics Expense,U700
+Property Tax Expense,Property & Real Estate Tax Expense,U705
+Telecommunications Expense,Telecommunications & Network Expense,U105
+Research & Development Expense,Research & Development Expense,U999
+Unmapped Expense Type A,Other Operating Expenses,U995
+Unmapped Expense Type B,Other Operating Expenses,U996
+Warranty Expense,Warranty & Service Costs,U480

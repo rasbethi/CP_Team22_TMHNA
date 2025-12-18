@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="home-container">
+    <!-- Page Header -->
+    <div style="margin-bottom: 2rem;">
+        <div style="font-size: 0.875rem; color: var(--slate-500); margin-bottom: 0.5rem;">
+            Dashboard / Governance
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+            <div>
+                <h1 style="font-size: 1.875rem; color: var(--slate-900); margin-bottom: 0.5rem;">Mapping Governance</h1>
+                <p style="color: var(--slate-600); max-width: 600px;">
+                    Manage canonical mappings for financial accounts, cost centers, and vendor matching rules.
+                </p>
+            </div>
+
+            <div class="page-actions">
+                <div class="role-badge enterprise">
+                    Admin Access
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <div class="fiori-tabs-section" style="border-bottom: 1px solid var(--slate-200); margin-bottom: 2rem;">
+        <div class="fiori-tabs" style="display: flex; gap: 2rem;">
+            <button class="fiori-tab active" data-target="financial-accounts-pane"
+                style="background: none; border: none; padding: 0.75rem 0; font-weight: 500; color: var(--slate-600); border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s;">Account
+                Mappings</button>
+            <button class="fiori-tab" data-target="financial-cost-centers-pane"
+                style="background: none; border: none; padding: 0.75rem 0; font-weight: 500; color: var(--slate-600); border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s;">Cost
+                Centers</button>
+            <button class="fiori-tab" data-target="vendor-rules-pane"
+                style="background: none; border: none; padding: 0.75rem 0; font-weight: 500; color: var(--slate-600); border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s;">Vendor
+                Rules</button>
+        </div>
+    </div>
+
+    <!-- CSS for tabs -->
+    <style>
+        .fiori-tab.active {
+            color: var(--slate-900) !important;
+            border-bottom-color: var(--slate-900) !important;
+        }
+
+        .fiori-pane {
+            display: none;
+        }
+
+        .fiori-pane.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+    </style>
+
+    <!-- Financial Account Mappings Pane -->
+    <section id="financial-accounts-pane" class="fiori-pane active">
+        <div class="content-card" style="margin-top: 0;">
+            <div class="content-header">
+                <div>
+                    <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem;">Unified Account Mappings
+                    </h3>
+                    <p class="text-muted" style="font-size: 0.875rem;">Map source account names to unified account
+                        numbers and names.</p>
+                </div>
+                <!-- Save Button -->
+                <button id="save-account-mappings" class="btn btn-primary">
+                    <i class="ph ph-floppy-disk" style="margin-right: 0.5rem;"></i> Save Changes
+                </button>
+            </div>
+            <div style="padding: 1rem;">
+                <div id="account-mappings-content">
+                    <div class="loading-spinner">Loading account mappings...</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Financial Cost Center Mappings Pane -->
+    <section id="financial-cost-centers-pane" class="fiori-pane">
+        <div class="content-card" style="margin-top: 0;">
+            <div class="content-header">
+                <div>
+                    <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem;">Unified Cost Center
+                        Mappings</h3>
+                    <p class="text-muted" style="font-size: 0.875rem;">Map source cost centers to unified cost center
+                        numbers and names.</p>
+                </div>
+                <!-- Save Button -->
+                <button id="save-cost-center-mappings" class="btn btn-primary">
+                    <i class="ph ph-floppy-disk" style="margin-right: 0.5rem;"></i> Save Changes
+                </button>
+            </div>
+            <div style="padding: 1rem;">
+                <div id="cost-center-mappings-content">
+                    <div class="loading-spinner">Loading cost center mappings...</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Vendor Rules Pane -->
+    <section id="vendor-rules-pane" class="fiori-pane">
+        <div class="content-card" style="margin-top: 0;">
+            <div class="content-header">
+                <div>
+                    <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem;">Vendor Matching Rules
+                    </h3>
+                    <p class="text-muted" style="font-size: 0.875rem;">Configure fuzzy matching thresholds and
+                        overrides.</p>
+                </div>
+                <!-- Save Button -->
+                <button id="save-vendor-rules" class="btn btn-primary">
+                    <i class="ph ph-floppy-disk" style="margin-right: 0.5rem;"></i> Save Rules
+                </button>
+            </div>
+            <div style="padding: 2rem;">
+                <div id="vendor-rules-content">
+                    <div class="loading-spinner">Loading rules...</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/mappings.js') }}"></script>
+{% endblock %}

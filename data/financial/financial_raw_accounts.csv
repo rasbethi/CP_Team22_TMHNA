@@ -1,0 +1,37 @@
+brand,source_account_name,source_account_number,source_cost_center,amount
+TMH,Cash,01-100,CC10,100000
+TMH,Accounts Receivable,01-200,CC10,250000
+TMH,Inventory,01-300,CC10,450000
+TMH,Equipment,01-500,CC20,1200000
+TMH,Service Revenue,04-400,CC30,850000
+TMH,Cost of Goods Sold,05-600,CC10,320000
+TMH,Salaries Expense,09-800,CC20,180000
+TMH,Utilities Expense,09-900,CC10,25000
+TMH,Legal Expense,09-960,CC20,28000
+TMH,Training Expense,09-965,CC10,19500
+TMH,Telecommunications Expense,09-980,CC20,22000
+TMH,Insurance Expense,09-985,CC20,25000
+TMH,Research & Development Expense,09-990,CC20,35000
+TMH,Unmapped Expense Type B,09-995,CC10,15000
+TMH,Office Supplies Expense,09-915,CC20,11000
+TMH,Depreciation Expense,09-920,CC10,14000
+TMH,Professional Services Expense,09-925,CC20,27000
+TMH,Warranty Expense,09-991,CC20,19500
+TMH,Bank Fees Expense,09-992,CC10,8500
+Raymond,Cash,01-101,RC10,90000
+Raymond,Accounts Receivable,01-201,RC10,220000
+Raymond,Inventory,01-301,RC10,380000
+Raymond,Equipment,01-501,RC20,950000
+Raymond,Service Revenue,04-401,RC30,720000
+Raymond,Cost of Goods Sold,05-601,RC10,285000
+Raymond,Salaries Expense,09-801,RC20,165000
+Raymond,Marketing Expense,09-825,RC30,32000
+Raymond,Software License Expense,09-970,RC20,31000
+Raymond,Freight Expense,09-975,RC10,16500
+Raymond,Property Tax Expense,09-980,RC30,28000
+Raymond,Depreciation Expense,09-985,RC10,15000
+Raymond,Bad Debt Expense,09-990,RC10,18000
+Raymond,Unmapped Expense Type A,09-995,RC10,12000
+Raymond,Maintenance Expense,09-945,RC99,18500
+Raymond,Rent Expense,09-950,RC30,42000
+

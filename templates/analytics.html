@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="home-container">
+    <!-- Page Header -->
+    <div style="margin-bottom: 2rem;">
+        <div style="font-size: 0.875rem; color: var(--slate-500); margin-bottom: 0.5rem;">
+            Dashboard / Analytics
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+            <div>
+                <h1 style="font-size: 1.875rem; color: var(--slate-900); margin-bottom: 0.5rem;">Analytics & Insights
+                </h1>
+                <p style="color: var(--slate-600); max-width: 600px;">
+                    {% if session.get('role') == 'maya' %}
+                    Enterprise-wide data quality, readiness scores, and cross-brand performance metrics.
+                    {% elif session.get('role') == 'liam' %}
+                    Raymond data readiness, variance tracking, and submission capability.
+                    {% else %}
+                    TMH data readiness, variance tracking, and submission capability.
+                    {% endif %}
+                </p>
+            </div>
+
+            <div class="page-actions">
+                <button class="btn btn-ghost" style="border: 1px solid var(--slate-200);">
+                    <i class="ph ph-funnel" style="margin-right: 0.5rem;"></i> Filter View
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Hero Section: Data Quality Overview -->
+    <div class="content-card"
+        style="margin-bottom: 2rem; background: linear-gradient(135deg, var(--white) 0%, var(--slate-50) 100%);">
+        <div class="content-header" style="border-bottom: 1px solid var(--slate-200);">
+            <div>
+                <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem;">Data Quality Pulse</h3>
+                <p class="text-muted" style="font-size: 0.875rem;">Real-time readiness assessment.</p>
+            </div>
+        </div>
+        <div style="padding: 2rem;">
+            <div id="data-quality-analytics">
+                <div class="loading-spinner">Calculating quality score...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard Grid - 3 columns for better space utilization -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; margin-top: 0;">
+        <!-- Column 1: Readiness Distribution -->
+        <div class="content-card" style="margin-top: 0; display: flex; flex-direction: column;">
+            <div class="content-header">
+                <div>
+                    <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem;">Readiness Distribution</h3>
+                    <p class="text-muted" style="font-size: 0.875rem;">Mapped vs Unmapped Data Segments</p>
+                </div>
+            </div>
+            <div style="padding: 1.5rem; display: flex; align-items: center; justify-content: center;">
+                <canvas id="data-readiness-chart" style="max-width: 100%; max-height: 280px;"></canvas>
+            </div>
+        </div>
+
+        <!-- Column 2: Variance Analysis -->
+        <div class="content-card" style="margin-top: 0; display: flex; flex-direction: column;">
+            <div class="content-header">
+                <div>
+                    <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem;">Variance Analysis</h3>
+                    <p class="text-muted" style="font-size: 0.875rem;">Categorization of identified discrepancies</p>
+                </div>
+            </div>
+            <div style="padding: 1.5rem; display: flex; align-items: center; justify-content: center;">
+                <canvas id="variance-breakdown-chart" style="width: 100%; max-height: 240px;"></canvas>
+            </div>
+        </div>
+
+        <!-- Column 3: Exception Monitor -->
+        <div class="content-card" style="margin-top: 0; display: flex; flex-direction: column;">
+            <div class="content-header">
+                <div>
+                    <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem;">Exception Monitor</h3>
+                    <p class="text-muted" style="font-size: 0.875rem;">Priority variances to resolve</p>
+                </div>
+            </div>
+            <div style="padding: 1.5rem;">
+                <div id="variance-analytics">
+                    <div class="loading-spinner">Loading variances...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Second Row: Submission and Vendor Cards -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; margin-top: 2rem;">
+        <!-- Submission Velocity -->
+        <div class="content-card" style="margin-top: 0; display: flex; flex-direction: column;">
+            <div class="content-header">
+                <div>
+                    <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem;">Submission Velocity</h3>
+                    <p class="text-muted" style="font-size: 0.875rem;">Package processing efficiency</p>
+                </div>
+            </div>
+            <div style="padding: 1.5rem;">
+                <div id="submission-analytics">
+                    <div class="loading-spinner">Loading metrics...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vendor Harmonization Status -->
+        <div class="content-card" style="margin-top: 0; display: flex; flex-direction: column;">
+            <div class="content-header">
+                <div>
+                    <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem;">Vendor Harmonization Status</h3>
+                    <p class="text-muted" style="font-size: 0.875rem;">Matched vs Unmatched vendors</p>
+                </div>
+            </div>
+            <div style="padding: 1.5rem; display: flex; align-items: center; justify-content: center;">
+                <canvas id="vendor-harmonization-chart" style="max-width: 100%; max-height: 280px;"></canvas>
+            </div>
+        </div>
+
+        <!-- Vendor Data Confidence Score -->
+        <div class="content-card" style="margin-top: 0; display: flex; flex-direction: column;">
+            <div class="content-header">
+                <div>
+                    <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem;">Vendor Data Confidence Score</h3>
+                    <p class="text-muted" style="font-size: 0.875rem;">Top vendors by data quality</p>
+                </div>
+            </div>
+            <div style="padding: 1.5rem; display: flex; align-items: center; justify-content: center;">
+                <canvas id="vendor-confidence-chart" style="max-width: 100%; max-height: 280px;"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mapping Impact (Maya only) -->
+    {% if session.get('role') == 'maya' %}
+    <div class="content-card" style="margin-top: 2rem;">
+        <div class="content-header">
+            <div>
+                <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem;">Governance Impact</h3>
+                <p class="text-muted" style="font-size: 0.875rem;">Mapping rule coverage and efficiency.</p>
+            </div>
+        </div>
+        <div style="padding: 2rem;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center;">
+                <div id="mapping-impact-analytics">
+                    <div class="loading-spinner">Loading impact data...</div>
+                </div>
+                <div style="height: 250px; width: 100%; display: flex; justify-content: center;">
+                    <canvas id="mapping-coverage-chart" style="max-height: 100%; max-width: 100%;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/analytics.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,17 @@
+brand,source_account,source_account_name,unified_account,unified_account_name,unified_cost_center,unified_cost_center_name,amount
+RAYMOND,01-101,Cash,U100,Cash & Cash Equivalents,UCC100,Manufacturing,90000
+RAYMOND,01-201,Accounts Receivable,U200,Accounts Receivable,UCC100,Manufacturing,220000
+RAYMOND,01-301,Inventory,U300,Inventory,UCC100,Manufacturing,380000
+RAYMOND,01-501,Equipment,U500,Fixed Assets - Equipment,UCC200,Engineering,950000
+RAYMOND,04-401,Service Revenue,U400,Service Revenue,UCC300,Sales & Distribution,720000
+RAYMOND,05-601,Cost of Goods Sold,U600,Cost of Goods Sold,UCC100,Manufacturing,285000
+RAYMOND,09-801,Salaries Expense,U800,Salaries & Wages Expense,UCC200,Engineering,165000
+RAYMOND,09-825,Marketing Expense,U825,Marketing & Advertising Expense,UCC300,Sales & Distribution,32000
+RAYMOND,09-970,Software License Expense,U970,Software & Technology Expense,UCC200,Engineering,31000
+RAYMOND,09-975,Freight Expense,U700,Freight & Logistics Expense,UCC100,Manufacturing,16500
+RAYMOND,09-980,Property Tax Expense,U705,Property & Real Estate Tax Expense,UCC300,Sales & Distribution,28000
+RAYMOND,09-985,Depreciation Expense,U920,Depreciation Expense,UCC100,Manufacturing,15000
+RAYMOND,09-990,Bad Debt Expense,U930,Bad Debt Expense,UCC100,Manufacturing,18000
+RAYMOND,09-995,Unmapped Expense Type A,U995,Other Operating Expenses,UCC100,Manufacturing,12000
+RAYMOND,09-945,Maintenance Expense,U945,Maintenance & Repairs Expense,UCC990,Central Maintenance Ops,18500
+RAYMOND,09-950,Rent Expense,U950,Rent Expense,UCC300,Sales & Distribution,42000
